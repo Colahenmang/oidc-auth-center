@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(pageTitle)">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">员工认证中心</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+<header class="topbar" th:fragment="topbar">
+    <div class="topbar__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span>员工认证中心</span>
+        </a>
+        <div class="session" th:if="${signedInUsername != null}">
+            <span class="session__account">当前账号 <strong th:text="${signedInUsername}"></strong></span>
+            <form th:action="@{/logout}" method="post">
+                <button class="button button--quiet" type="submit">退出认证中心</button>
+            </form>
+        </div>
+    </div>
+</header>
+</body>
+</html>

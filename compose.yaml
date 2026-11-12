@@ -1,0 +1,38 @@
+services:
+  auth-server:
+    build:
+      context: .
+      args:
+        MODULE: auth-server
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      DEMO_CLIENT_SECRET: ${DEMO_CLIENT_SECRET:-local-demo-client-secret}
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - auth-data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "--max-time", "3", "-o", "/dev/null", "http://127.0.0.1:9000/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 15s
+
+  demo-client:
+    build:
+      context: .
+      args:
+        MODULE: demo-client
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      DEMO_CLIENT_SECRET: ${DEMO_CLIENT_SECRET:-local-demo-client-secret}
+      DEMO_AUTH_BACKCHANNEL: http://auth-server:9000
+      DEMO_REDIRECT_URI: ${DEMO_REDIRECT_URI:-http://127.0.0.1:8081/login/oauth2/code/work-order}
+    ports:
+      - "127.0.0.1:8081:8081"
+    depends_on:
+      auth-server:
+        condition: service_healthy
+
+volumes:
+  auth-data:

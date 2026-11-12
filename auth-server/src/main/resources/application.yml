@@ -1,0 +1,23 @@
+server:
+  address: 127.0.0.1
+  port: 9000
+  servlet:
+    session:
+      cookie:
+        name: AUTH_CENTER_SESSION
+        http-only: true
+        same-site: lax
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/identity-center
+    username: sa
+  sql:
+    init:
+      mode: always
+
+demo:
+  issuer: http://127.0.0.1:9000
+  employee-password: '${DEMO_EMPLOYEE_PASSWORD:Demo-Employee-2026!}'
+  admin-password: '${DEMO_ADMIN_PASSWORD:Demo-Admin-2026!}'
+  client-secret: '${DEMO_CLIENT_SECRET:local-demo-client-secret}'

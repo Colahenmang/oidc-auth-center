@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/shell :: head('员工认证中心')}">
+    <title>员工认证中心</title>
+</head>
+<body>
+<header th:replace="~{fragments/shell :: topbar}"></header>
+<main class="page landing">
+    <section class="hero" aria-labelledby="home-title">
+        <div class="hero__copy">
+            <h1 id="home-title">员工统一登录</h1>
+            <p>为已登记的应用验证员工身份。</p>
+        </div>
+        <div class="identity-art" aria-hidden="true">
+            <span class="identity-art__track"></span>
+            <span class="identity-art__node identity-art__node--left"></span>
+            <span class="identity-art__node identity-art__node--right"></span>
+            <span class="identity-art__tile"><span class="brand__mark"></span></span>
+        </div>
+    </section>
+    <div class="destinations">
+        <a class="destination" href="http://127.0.0.1:8081/">
+            <span class="symbol symbol--grid" aria-hidden="true"></span>
+            <span class="destination__body">
+                <strong>打开工单演示</strong>
+                <span>体验登录和身份回传</span>
+            </span>
+            <span class="chevron" aria-hidden="true"></span>
+        </a>
+        <a class="destination" th:href="@{/admin/application}">
+            <span class="symbol symbol--settings" aria-hidden="true"></span>
+            <span class="destination__body">
+                <strong>管理应用</strong>
+                <span>查看和更新回调地址</span>
+            </span>
+            <span class="chevron" aria-hidden="true"></span>
+        </a>
+    </div>
+</main>
+</body>
+</html>

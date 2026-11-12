@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/shell :: head('员工登录 · 认证中心')}">
+    <title>员工登录 · 认证中心</title>
+</head>
+<body>
+<header th:replace="~{fragments/shell :: topbar}"></header>
+<main class="page auth-page">
+    <section class="auth-panel" aria-labelledby="login-title">
+        <div class="identity-art identity-art--login" aria-hidden="true">
+            <span class="identity-art__track"></span>
+            <span class="identity-art__node identity-art__node--left"></span>
+            <span class="identity-art__node identity-art__node--right"></span>
+            <span class="identity-art__tile"><span class="brand__mark"></span></span>
+        </div>
+        <div class="auth-panel__body">
+            <h1 id="login-title">登录</h1>
+            <p class="muted auth-panel__intro">使用员工或管理员账号验证身份。</p>
+            <p class="notice notice--error" role="alert" th:if="${param.error}">账号或密码错误，请重试。</p>
+            <p class="notice notice--success" role="status" th:if="${param.logout}">已退出认证中心。</p>
+            <form class="form-stack" th:action="@{/login}" method="post">
+                <div class="form-field">
+                    <label for="username">账号</label>
+                    <input id="username" name="username" autocomplete="username" required autofocus>
+                </div>
+                <div class="form-field">
+                    <label for="password">密码</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+                <button class="button button--primary button--full" type="submit">登录</button>
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>

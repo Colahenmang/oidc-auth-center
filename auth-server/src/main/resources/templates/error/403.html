@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/shell :: head('访问受限 · 员工认证中心')}">
+    <title>访问受限 · 员工认证中心</title>
+</head>
+<body>
+<header th:replace="~{fragments/shell :: topbar}"></header>
+<main class="page message-page">
+    <section class="card message-card" aria-labelledby="error-title">
+        <p class="error-code">HTTP 403</p>
+        <h1 id="error-title">当前账号无权访问</h1>
+        <p th:if="${path == '/admin/application'}">管理应用需要管理员账号。切换账号后可重新进入应用配置。</p>
+        <p th:unless="${path == '/admin/application'}">请确认当前账号的访问权限，再发起请求。</p>
+        <div class="form-actions">
+            <a class="button button--primary" th:href="@{/login}">切换登录账号</a>
+            <a class="button button--quiet" th:href="@{/}">返回首页</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

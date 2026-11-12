@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/shell :: head('请求无效 · 员工认证中心')}">
+    <title>请求无效 · 员工认证中心</title>
+</head>
+<body>
+<header th:replace="~{fragments/shell :: topbar}"></header>
+<main class="page message-page">
+    <section class="card message-card" aria-labelledby="error-title">
+        <p class="error-code">HTTP 400</p>
+        <h1 id="error-title">请求无法处理</h1>
+        <p th:if="${path == '/oauth2/authorize'}">
+            请核对工单应用请求的回调地址。管理员在配置页保存完整的匹配地址后，可以从工单页重新发起登录。
+        </p>
+        <p th:unless="${path == '/oauth2/authorize'}">请检查提交的信息，再从认证中心首页重试。</p>
+        <div class="form-actions">
+            <a class="button button--primary" th:href="@{/}">返回首页</a>
+            <a class="button button--quiet" th:href="@{/admin/application}" th:if="${path == '/oauth2/authorize'}">查看应用配置</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

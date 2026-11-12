@@ -1,0 +1,29 @@
+server:
+  address: 127.0.0.1
+  port: 8081
+  servlet:
+    session:
+      cookie:
+        name: DEMO_SESSION
+        http-only: true
+        same-site: lax
+
+spring:
+  application:
+    name: demo-client
+  security:
+    oauth2:
+      client:
+        registration:
+          work-order:
+            provider: employee-identity
+            client-id: work-order-demo
+            client-name: 工单登录演示
+            client-secret: ${DEMO_CLIENT_SECRET:local-demo-client-secret}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: ${DEMO_REDIRECT_URI:http://127.0.0.1:8081/login/oauth2/code/work-order}
+            scope: [openid, profile]
+        provider:
+          employee-identity:
+            issuer-uri: http://127.0.0.1:9000
