@@ -7,6 +7,7 @@ services:
     environment:
       SERVER_ADDRESS: 0.0.0.0
       DEMO_CLIENT_SECRET: ${DEMO_CLIENT_SECRET:-local-demo-client-secret}
+      DEMO_HR_CLIENT_SECRET: ${DEMO_HR_CLIENT_SECRET:-local-hr-demo-client-secret}
     ports:
       - "127.0.0.1:9000:9000"
     volumes:
@@ -30,6 +31,23 @@ services:
       DEMO_REDIRECT_URI: ${DEMO_REDIRECT_URI:-http://127.0.0.1:8081/login/oauth2/code/work-order}
     ports:
       - "127.0.0.1:8081:8081"
+    depends_on:
+      auth-server:
+        condition: service_healthy
+
+  hr-client:
+    build:
+      context: .
+      args:
+        MODULE: demo-client
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      SPRING_PROFILES_ACTIVE: hr
+      DEMO_HR_CLIENT_SECRET: ${DEMO_HR_CLIENT_SECRET:-local-hr-demo-client-secret}
+      DEMO_AUTH_BACKCHANNEL: http://auth-server:9000
+      DEMO_HR_REDIRECT_URI: ${DEMO_HR_REDIRECT_URI:-http://127.0.0.1:8082/login/oauth2/code/hr}
+    ports:
+      - "127.0.0.1:8082:8082"
     depends_on:
       auth-server:
         condition: service_healthy

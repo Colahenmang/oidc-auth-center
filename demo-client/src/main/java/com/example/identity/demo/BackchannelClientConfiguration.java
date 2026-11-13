@@ -22,19 +22,20 @@ class BackchannelClientConfiguration {
 
     @Bean
     ClientRegistrationRepository containerClientRegistration(OAuth2ClientProperties properties,
-            @Value("${demo.auth.backchannel}") URI backchannel) {
-        var workOrder = properties.getRegistration().get("work-order");
-        String issuer = properties.getProvider().get(workOrder.getProvider()).getIssuerUri();
+            @Value("${demo.auth.backchannel}") URI backchannel,
+            @Value("${demo.registration-id}") String registrationId) {
+        var client = properties.getRegistration().get(registrationId);
+        String issuer = properties.getProvider().get(client.getProvider()).getIssuerUri();
 
         // Keep the browser URL and token issuer public. Server-to-server requests use Compose DNS.
-        ClientRegistration registration = ClientRegistration.withRegistrationId("work-order")
-                .clientId(workOrder.getClientId())
-                .clientName(workOrder.getClientName())
-                .clientSecret(workOrder.getClientSecret())
-                .clientAuthenticationMethod(new ClientAuthenticationMethod(workOrder.getClientAuthenticationMethod()))
-                .authorizationGrantType(new AuthorizationGrantType(workOrder.getAuthorizationGrantType()))
-                .redirectUri(workOrder.getRedirectUri())
-                .scope(workOrder.getScope())
+        ClientRegistration registration = ClientRegistration.withRegistrationId(registrationId)
+                .clientId(client.getClientId())
+                .clientName(client.getClientName())
+                .clientSecret(client.getClientSecret())
+                .clientAuthenticationMethod(new ClientAuthenticationMethod(client.getClientAuthenticationMethod()))
+                .authorizationGrantType(new AuthorizationGrantType(client.getAuthorizationGrantType()))
+                .redirectUri(client.getRedirectUri())
+                .scope(client.getScope())
                 .issuerUri(issuer)
                 .authorizationUri(issuer + "/oauth2/authorize")
                 .tokenUri(backchannel.resolve("/oauth2/token").toString())

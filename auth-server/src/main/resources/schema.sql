@@ -14,3 +14,16 @@ CREATE TABLE IF NOT EXISTS oauth2_registered_client (
     client_settings VARCHAR(2000) NOT NULL,
     token_settings VARCHAR(2000) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS demo_application_access (
+    client_id VARCHAR(100) NOT NULL,
+    username VARCHAR(100) NOT NULL,
+    access_granted BOOLEAN NOT NULL,
+    PRIMARY KEY (client_id, username)
+);
+
+CREATE TABLE IF NOT EXISTS demo_employee (
+    username VARCHAR(50) PRIMARY KEY,
+    display_name VARCHAR(80) NOT NULL,
+    password_hash VARCHAR(100) NOT NULL
+);

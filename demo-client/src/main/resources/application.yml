@@ -1,10 +1,8 @@
 server:
   address: 127.0.0.1
-  port: 8081
   servlet:
     session:
       cookie:
-        name: DEMO_SESSION
         http-only: true
         same-site: lax
 
@@ -14,16 +12,96 @@ spring:
   security:
     oauth2:
       client:
+        provider:
+          employee-identity:
+            issuer-uri: http://127.0.0.1:9000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: '!hr & !finance'
+  security:
+    oauth2:
+      client:
         registration:
           work-order:
             provider: employee-identity
             client-id: work-order-demo
-            client-name: 工单登录演示
+            client-name: ${demo.app-label}登录演示
             client-secret: ${DEMO_CLIENT_SECRET:local-demo-client-secret}
             client-authentication-method: client_secret_basic
             authorization-grant-type: authorization_code
             redirect-uri: ${DEMO_REDIRECT_URI:http://127.0.0.1:8081/login/oauth2/code/work-order}
             scope: [openid, profile]
-        provider:
-          employee-identity:
-            issuer-uri: http://127.0.0.1:9000
+
+server:
+  port: 8081
+  servlet:
+    session:
+      cookie:
+        name: DEMO_SESSION
+
+demo:
+  app-label: 工单
+  registration-id: work-order
+
+---
+spring:
+  config:
+    activate:
+      on-profile: 'hr & !finance'
+  security:
+    oauth2:
+      client:
+        registration:
+          hr:
+            provider: employee-identity
+            client-id: hr-demo
+            client-name: ${demo.app-label}登录演示
+            client-secret: ${DEMO_HR_CLIENT_SECRET:local-hr-demo-client-secret}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: ${DEMO_HR_REDIRECT_URI:http://127.0.0.1:8082/login/oauth2/code/hr}
+            scope: [openid, profile]
+
+server:
+  port: 8082
+  servlet:
+    session:
+      cookie:
+        name: HR_DEMO_SESSION
+
+demo:
+  app-label: 人事
+  registration-id: hr
+
+---
+spring:
+  config:
+    activate:
+      on-profile: finance
+  security:
+    oauth2:
+      client:
+        registration:
+          finance:
+            provider: employee-identity
+            client-id: ${DEMO_FINANCE_CLIENT_ID:}
+            client-name: ${demo.app-label}登录演示
+            client-secret: ${DEMO_FINANCE_CLIENT_SECRET:}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: ${DEMO_FINANCE_REDIRECT_URI:http://127.0.0.1:8083/login/oauth2/code/finance}
+            scope: [openid, profile]
+
+server:
+  port: 8083
+  servlet:
+    session:
+      cookie:
+        name: FINANCE_DEMO_SESSION
+
+demo:
+  app-label: 财务
+  registration-id: finance

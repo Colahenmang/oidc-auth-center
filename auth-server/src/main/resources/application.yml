@@ -21,3 +21,4 @@ demo:
   employee-password: '${DEMO_EMPLOYEE_PASSWORD:Demo-Employee-2026!}'
   admin-password: '${DEMO_ADMIN_PASSWORD:Demo-Admin-2026!}'
   client-secret: '${DEMO_CLIENT_SECRET:local-demo-client-secret}'
+  hr-client-secret: '${DEMO_HR_CLIENT_SECRET:local-hr-demo-client-secret}'

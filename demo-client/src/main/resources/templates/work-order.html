@@ -3,54 +3,53 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>工单登录演示</title>
+    <title th:text="|${appLabel}登录演示|">工单登录演示</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
-    <link rel="icon" type="image/png"
-          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHSURBVFhHxZexTsMwEIY9MvIGlbCzM/IIfYLYhaGMjIyMCDEwMXSBoRILY9+BjfqyMKGOLCBGxMQY5JZAfD6nNkmck74hd73z77OT2owhyw5hX+SPpzyHOZdw3hVCwa2pK3J9gMdcmwlwCSuhoOyeAj3rd65gbA3uJlkJhK89mVwes9H0YUcoeMFBiwnhCyAjfDb6I2D2/cK4hGvsTAnjSt9jZ0oYV8UVdtL0sxHNEph31AmkoibAneHRxaqcLd7K2eK1FaYOrp39fBsaOqDXyV2YqVOvWx+nQQD8CtDPn86sQjB5rgCbIAFNBZoIyY8SsNkT7kwx1ZrjfIooAdXzNsO/70zA4B2IJSQ/SoCvA9R7TuVTRAmonrH5BsD5FFECBu9ALCH5QQIG/xK2tQgB9unVt+ax+PYIIcCH+1fdDbpke0pfbj299nUqnpgO5DB3AgkxSzD0qRjG2JkSNpo+7QoJXzjg0s9G3NwNFZzgQAq41Dd/F1S5PKM6UZ1e/4+vc8WduZd+A4nDxtJMO8KHAAAAAElFTkSuQmCC">
+    <link rel="icon" href="data:,">
 </head>
-<body>
+<body th:classappend="|${registrationId}-demo|">
 <header class="site-header">
     <div class="header-content">
-        <span class="app-mark" aria-hidden="true"><span class="ticket-mark"></span></span>
-        <span>工单登录演示</span>
+        <span class="app-mark" aria-hidden="true"><span class="app-icon"></span></span>
+        <span th:text="|${appLabel}登录演示|">工单登录演示</span>
     </div>
 </header>
 <main class="work-order">
-    <div class="visual-panel" aria-hidden="true">
-        <div class="visual-stage">
-            <div class="visual-ticket">
-                <div class="visual-ticket-heading">
-                    <span class="ticket-mark"></span>
-                    <span></span>
-                </div>
-                <div class="visual-ticket-lines"><span></span><span></span><span></span></div>
-            </div>
-            <div class="visual-identity"><span class="check-mark"></span></div>
-        </div>
-    </div>
     <section class="work-order-content" aria-labelledby="page-title">
         <th:block th:if="${employeeId == null}">
-            <h1 id="page-title">登录工单系统</h1>
+            <h1 id="page-title" th:text="|登录${appLabel}系统|">登录工单系统</h1>
             <p class="intro">使用员工账号，通过统一认证中心登录。</p>
-            <p class="error" role="alert" th:if="${param.error != null}">登录未完成，请重新发起登录。</p>
-            <a class="button primary" th:href="@{/oauth2/authorization/work-order}">
+            <p class="error" role="alert" th:if="${param.error != null}"
+               th:text="${registrationId != 'work-order' and param.error[0] == 'access_denied'}
+                   ? |你没有${appLabel}应用的访问权限，请联系管理员。| : '登录未完成，请重新发起登录。'">
+                登录未完成，请重新发起登录。
+            </p>
+            <a class="button primary" th:href="@{/oauth2/authorization/{registrationId}(registrationId=${registrationId})}">
                 登录<span class="button-arrow" aria-hidden="true"></span>
             </a>
         </th:block>
         <th:block th:if="${employeeId != null}">
-            <h1 class="success-heading" id="page-title">
-                <span class="success-icon" aria-hidden="true"><span class="check-mark"></span></span>
-                登录成功
-            </h1>
+            <span class="success-icon" aria-hidden="true"><span class="check-mark"></span></span>
+            <h1 id="page-title">登录成功</h1>
             <dl class="employee">
                 <div><dt>当前员工</dt><dd th:text="${employeeName}"></dd></div>
                 <div><dt>员工 ID</dt><dd><code th:text="${employeeId}"></code></dd></div>
             </dl>
             <form th:action="@{/logout}" method="post">
-                <button class="button secondary" type="submit">退出工单</button>
+                <button class="button secondary" type="submit" th:text="|退出${appLabel}|">退出工单</button>
             </form>
         </th:block>
     </section>
+    <div class="visual-panel" aria-hidden="true">
+        <div class="visual-stage">
+            <div class="ticket-layer"></div>
+            <div class="visual-ticket">
+                <div class="visual-ticket-heading"><span class="app-icon"></span><span></span></div>
+                <div class="visual-ticket-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="visual-identity"><span class="check-mark"></span></div>
+        </div>
+    </div>
 </main>
 </body>
 </html>
