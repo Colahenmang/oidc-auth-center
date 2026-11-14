@@ -14,7 +14,7 @@
         </div>
         <div th:replace="~{fragments/shell :: identityArt}"></div>
     </section>
-    <section class="application-entry" id="applications" aria-labelledby="applications-title">
+    <section class="application-entry" id="applications" tabindex="-1" aria-labelledby="applications-title">
         <div class="application-entry__heading">
             <h2 id="applications-title">应用入口</h2>
             <a class="application-entry__manage" th:href="@{/admin/application}">
