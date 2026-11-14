@@ -10,8 +10,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:file:./data/identity-center
-    username: sa
+    url: '${DEMO_DB_URL:jdbc:mysql://127.0.0.1:3306/oidc_auth_center?characterEncoding=UTF-8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}'
+    username: '${DEMO_DB_USER:oidc_demo}'
+    password: '${DEMO_DB_PASSWORD}'
   sql:
     init:
       mode: always

@@ -1,4 +1,4 @@
--- H2 form of the registered client schema shipped with Spring Security.
+-- Registered client schema for Spring Security's JDBC repository.
 CREATE TABLE IF NOT EXISTS oauth2_registered_client (
     id VARCHAR(100) PRIMARY KEY,
     client_id VARCHAR(100) NOT NULL UNIQUE,
@@ -13,17 +13,17 @@ CREATE TABLE IF NOT EXISTS oauth2_registered_client (
     scopes VARCHAR(1000) NOT NULL,
     client_settings VARCHAR(2000) NOT NULL,
     token_settings VARCHAR(2000) NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs;
 
 CREATE TABLE IF NOT EXISTS demo_application_access (
     client_id VARCHAR(100) NOT NULL,
     username VARCHAR(100) NOT NULL,
     access_granted BOOLEAN NOT NULL,
     PRIMARY KEY (client_id, username)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs;
 
 CREATE TABLE IF NOT EXISTS demo_employee (
     username VARCHAR(50) PRIMARY KEY,
     display_name VARCHAR(80) NOT NULL,
     password_hash VARCHAR(100) NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs;

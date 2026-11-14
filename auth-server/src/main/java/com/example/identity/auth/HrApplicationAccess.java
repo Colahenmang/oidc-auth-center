@@ -22,8 +22,9 @@ class HrApplicationAccess {
 
     void setGranted(String username, boolean allowed) {
         jdbc.update("""
-                MERGE INTO demo_application_access (client_id, username, access_granted)
-                KEY (client_id, username) VALUES (?, ?, ?)
-                """, SecurityConfiguration.HR_CLIENT, username, allowed);
+                INSERT INTO demo_application_access (client_id, username, access_granted)
+                VALUES (?, ?, ?)
+                ON DUPLICATE KEY UPDATE access_granted = ?
+                """, SecurityConfiguration.HR_CLIENT, username, allowed, allowed);
     }
 }

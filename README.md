@@ -9,7 +9,7 @@
 - **员工和权限管理。** 管理员可以创建、搜索员工，也可以为指定员工开通或取消人事访问。取消后，该员工重新登录人事会收到无权限提示，仍能进入工单。
 - **新应用接入。** 工单和人事是预置的演示应用。财务可以从管理页新登记，再用生成的应用 ID 和密钥启动，登录后回到财务页。
 
-按[本地启动](#本地启动)运行项目后，可以用[演示与验收](#演示与验收)里的操作和预期结果逐项检查。项目提示词和上下文按八个阶段记录，每个阶段都写了做什么和怎么验收。[完整的项目提示词与上下文](docs/AI-CODING.md)
+从 GitHub 克隆项目后，按[本地启动](#本地启动)准备 MySQL 8，再依照[演示与验收](#演示与验收)逐项检查。项目提示词和上下文按开发阶段记录，每个阶段都写了做什么和怎么验收。[完整的项目提示词与上下文](docs/AI-CODING.md)
 
 | 模块 | 入口 | 功能 |
 | --- | --- | --- |
@@ -20,9 +20,28 @@
 
 ## 本地启动
 
-已实测 Java 本地启动和浏览器登录。使用 JDK 21、Maven 3.6.3 或更高版本，在仓库根目录运行以下命令。
+需要 JDK 21、Maven 3.6.3 或更高版本、MySQL 8。以下命令以 Windows PowerShell 7.2 或更高版本为例。
+
+### 准备 MySQL
+
+启动本机的 MySQL 服务，用有建库和建用户权限的账号执行以下 SQL。先将示例密码占位符换成自己的值，数据库用户只需要访问这个演示库。
+
+```sql
+CREATE DATABASE IF NOT EXISTS oidc_auth_center CHARACTER SET utf8mb4;
+CREATE USER 'oidc_demo'@'127.0.0.1' IDENTIFIED BY '<替换为本机演示库密码>';
+GRANT CREATE, SELECT, INSERT, UPDATE, DELETE ON oidc_auth_center.* TO 'oidc_demo'@'127.0.0.1';
+```
+
+已有专用数据库账号时，可使用现有账号并通过 `DEMO_DB_USER` 指定。认证中心连接到已有的数据库后会自动建表，并初始化演示员工和内置应用登记。运行需要可访问的 MySQL，原 H2 演示数据不会自动迁入。
+
+### 启动认证中心和演示应用
+
+在仓库根目录运行以下命令。URL 与用户名是默认值，按实际部署修改。数据库密码在运行时输入。
 
 ```powershell
+$env:DEMO_DB_URL = 'jdbc:mysql://127.0.0.1:3306/oidc_auth_center?characterEncoding=UTF-8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true'
+$env:DEMO_DB_USER = 'oidc_demo'
+$env:DEMO_DB_PASSWORD = Read-Host 'MySQL password' -MaskInput
 mvn -B -ntp package
 java -jar auth-server/target/auth-server-0.1.0-SNAPSHOT.jar
 ```
@@ -52,7 +71,7 @@ java -jar demo-client/target/demo-client-0.1.0-SNAPSHOT.jar --spring.profiles.ac
 ### 登记并启动财务演示
 
 1. 以管理员身份进入[应用配置](http://127.0.0.1:9000/admin/application)，点「新增应用」。应用名称填「财务演示」，回调地址填 `http://127.0.0.1:8083/login/oauth2/code/finance`。
-2. 提交后记下生成的应用 ID 和应用密钥。明文密钥仅在创建成功时显示一次，由财务应用后端使用。在项目根目录打开 PowerShell 7，运行下列命令，在提示时粘贴对应的值。
+2. 提交后记下生成的应用 ID 和应用密钥。明文密钥仅在创建成功时显示一次，由财务应用后端使用。在项目根目录打开 PowerShell 7.2 或更高版本，运行下列命令，在提示时粘贴对应的值。
 
 ```powershell
 $env:DEMO_FINANCE_CLIENT_ID = Read-Host 'Client ID'
@@ -73,14 +92,14 @@ java -jar demo-client/target/demo-client-0.1.0-SNAPSHOT.jar --spring.profiles.ac
 
 浏览器入口绑定本机。项目预置工单和人事两个应用，以及以下两个演示账号。
 
-新建数据库时，员工列表会初始化一个名为「演示员工」的示例账号。本地数据库位于被 Git 忽略的 `data/` 目录，评审从仓库启动时会用自己的数据库。
+认证中心首次连接空演示库时，员工列表会初始化一个名为「演示员工」的示例账号。评审从仓库启动时使用自己的 MySQL 数据库。
 
 | 用途 | 账号 | 密码 |
 | --- | --- | --- |
 | 登录工单、人事和财务演示 | `employee` | `Demo-Employee-2026!` |
 | 登记应用、管理回调地址、员工和人事访问权限 | `admin` | `Demo-Admin-2026!` |
 
-使用 Java 启动时，应用配置、员工账号及其 BCrypt 密码哈希、人事权限保存在认证中心的 `data/identity-center.mv.db`。管理员和签名密钥在启动时初始化。可用 `DEMO_EMPLOYEE_PASSWORD`、`DEMO_ADMIN_PASSWORD` 覆盖演示密码。覆盖 `DEMO_CLIENT_SECRET` 或 `DEMO_HR_CLIENT_SECRET` 时，认证中心和对应的演示应用须使用同一值。
+应用配置、员工账号及其 BCrypt 密码哈希、人事权限保存在 MySQL。管理员和签名密钥在启动时初始化。可用 `DEMO_EMPLOYEE_PASSWORD`、`DEMO_ADMIN_PASSWORD` 覆盖演示登录密码。覆盖 `DEMO_CLIENT_SECRET` 或 `DEMO_HR_CLIENT_SECRET` 时，认证中心和对应的演示应用须使用同一值。
 
 ## 演示与验收
 
@@ -139,19 +158,19 @@ pwsh -File ./scripts/Test-Login.ps1 -IncludeHrAccess
 ### 代码入口
 
 - [认证中心安全配置](auth-server/src/main/java/com/example/identity/auth/SecurityConfiguration.java)启用 OIDC，在授权请求里精确比对已登记的回调地址。
-- [应用配置控制器](auth-server/src/main/java/com/example/identity/auth/ApplicationSettingsController.java)处理管理员登记新应用和修改回调地址，应用登记信息存放在 H2。
+- [应用配置控制器](auth-server/src/main/java/com/example/identity/auth/ApplicationSettingsController.java)处理管理员登记新应用、修改回调地址以及删除自定义登记。应用登记信息存放在 MySQL。
 - [工单登录配置](demo-client/src/main/java/com/example/identity/demo/DemoSecurity.java)用 Spring Security 处理授权码兑换和会话。[工单首页控制器](demo-client/src/main/java/com/example/identity/demo/WorkOrderController.java)从已认证用户读取姓名和 ID。
 
 ## Docker Compose 启动
 
-Compose 同时启动认证中心、工单和人事。财务演示按上面的 Java 步骤登记后单独启动。容器构建和启动待在有 Docker Engine 的环境实测。两种启动方式使用相同端口，切换前先停止占用 `9000`、`8081` 和 `8082` 的服务。
+Compose 自动启动 MySQL、认证中心、工单和人事。它会为本地演示初始化 `oidc_auth_center` 和 `oidc_demo`。首次初始化前可用 `DEMO_DB_PASSWORD` 和 `DEMO_MYSQL_ROOT_PASSWORD` 分别覆盖两个默认演示密码。财务演示按上面的 Java 步骤登记后单独启动。容器构建和启动待在有 Docker Engine 的环境实测。两种启动方式使用相同端口，切换前先停止占用 `9000`、`8081` 和 `8082` 的服务。
 
 ```sh
 docker compose up --build -d
 docker compose ps
 ```
 
-Compose 在认证中心的 OIDC 发现端点可用后启动两个演示应用。浏览器访问 `127.0.0.1:9000`，演示应用后端通过 `auth-server:9000` 访问认证中心，验证 ID Token 时使用浏览器访问的地址作为签发方。H2 应用配置保存在 `auth-data` 命名卷。
+Compose 在 MySQL 就绪后启动认证中心，并在 OIDC 发现端点可用后启动两个演示应用。浏览器访问 `127.0.0.1:9000`，演示应用后端通过 `auth-server:9000` 访问认证中心，验证 ID Token 时使用浏览器访问的地址作为签发方。MySQL 数据保存在 `mysql-data` 命名卷，普通停止操作会保留数据。
 
 ```sh
 docker compose down

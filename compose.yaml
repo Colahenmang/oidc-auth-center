@@ -1,4 +1,25 @@
 services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: oidc_auth_center
+      MYSQL_USER: oidc_demo
+      MYSQL_PASSWORD: ${DEMO_DB_PASSWORD:-local-oidc-demo-db-password}
+      MYSQL_ROOT_PASSWORD: ${DEMO_MYSQL_ROOT_PASSWORD:-local-oidc-mysql-root-password}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          MYSQL_PWD="$$MYSQL_PASSWORD" mysql --protocol=TCP --host=127.0.0.1
+          --user="$$MYSQL_USER" --database="$$MYSQL_DATABASE" --connect-timeout=3
+          --batch --execute='SELECT 1'
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 30s
+
   auth-server:
     build:
       context: .
@@ -6,12 +27,16 @@ services:
         MODULE: auth-server
     environment:
       SERVER_ADDRESS: 0.0.0.0
+      DEMO_DB_URL: "jdbc:mysql://mysql:3306/oidc_auth_center?characterEncoding=UTF-8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true"
+      DEMO_DB_USER: oidc_demo
+      DEMO_DB_PASSWORD: ${DEMO_DB_PASSWORD:-local-oidc-demo-db-password}
       DEMO_CLIENT_SECRET: ${DEMO_CLIENT_SECRET:-local-demo-client-secret}
       DEMO_HR_CLIENT_SECRET: ${DEMO_HR_CLIENT_SECRET:-local-hr-demo-client-secret}
     ports:
       - "127.0.0.1:9000:9000"
-    volumes:
-      - auth-data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-fsS", "--max-time", "3", "-o", "/dev/null", "http://127.0.0.1:9000/.well-known/openid-configuration"]
       interval: 5s
@@ -53,4 +78,4 @@ services:
         condition: service_healthy
 
 volumes:
-  auth-data:
+  mysql-data:

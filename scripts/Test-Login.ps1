@@ -76,9 +76,10 @@ function Get-Redirect($Response, [uri]$Expected, [string]$Message) {
     return $location
 }
 
-function Get-InputValue([string]$Html, [string]$Name) {
+function Get-InputValue([string]$Html, [string]$Name, [string]$Id = '') {
     $fieldName = [regex]::Escape($Name)
-    $inputPattern = '(?is)<input\b(?=[^>]*\bname\s*=\s*["'']{0}["''])[^>]*\bvalue\s*=\s*["'']([^"'']*)["'']' -f $fieldName
+    $matchId = if ($Id) { '(?=[^>]*\sid\s*=\s*["'']{0}["''])' -f [regex]::Escape($Id) } else { '' }
+    $inputPattern = '(?is)<input\b(?=[^>]*\sname\s*=\s*["'']{0}["'']){1}[^>]*\svalue\s*=\s*["'']([^"'']*)["'']' -f $fieldName, $matchId
     $field = [regex]::Match($Html, $inputPattern)
     Assert-Test $field.Success "The form did not contain $Name."
     return [System.Net.WebUtility]::HtmlDecode($field.Groups[1].Value)
@@ -97,12 +98,13 @@ function Set-Callback($Client, [string]$RedirectUri) {
     $form = Send-Request $Client $adminPage
     Assert-Test ($form.Status -eq 200) 'The application configuration form did not load.'
     $save = Send-Request $Client $adminPage @{
+        clientId = 'work-order-demo'
         redirectUri = $RedirectUri
         _csrf = Get-InputValue $form.Body '_csrf'
     }
     Assert-Test ($save.Status -in 200, 302, 303) 'The callback configuration could not be saved.'
     $saved = Send-Request $Client $adminPage
-    Assert-Test ((Get-InputValue $saved.Body 'redirectUri') -ceq $RedirectUri) 'The saved callback did not match.'
+    Assert-Test ((Get-InputValue $saved.Body 'redirectUri' 'redirect-uri') -ceq $RedirectUri) 'The saved work-order callback did not match.'
 }
 
 function Find-HrAccessForms([string]$Html) {
@@ -340,7 +342,7 @@ try {
 
     if ($IncludeCallbackConfig) {
         $adminForm = Send-Request $admin $adminReturn
-        $original = Get-InputValue $adminForm.Body 'redirectUri'
+        $original = Get-InputValue $adminForm.Body 'redirectUri' 'redirect-uri'
         Assert-Test ($original -ceq $callback.AbsoluteUri) 'The starting configuration did not contain the expected callback.'
         try {
             Set-Callback $admin $mismatchedCallback.AbsoluteUri
