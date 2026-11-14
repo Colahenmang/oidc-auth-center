@@ -55,7 +55,7 @@ class EmployeeDirectory {
     void initializeDemoEmployee(String password) {
         var existing = find(DEMO_EMPLOYEE);
         if (existing.isEmpty()) {
-            create(DEMO_EMPLOYEE, "小朱", password);
+            create(DEMO_EMPLOYEE, "演示员工", password);
         } else if (!passwords.matches(password, existing.get().passwordHash())) {
             jdbc.update("UPDATE demo_employee SET password_hash = ? WHERE username = ?",
                     passwords.encode(password), DEMO_EMPLOYEE);

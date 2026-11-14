@@ -75,7 +75,15 @@
                             <h2 th:id="${titleId}" th:text="${app.clientName}">工单演示</h2>
                             <dl class="application__meta">
                                 <dt>应用 ID</dt>
-                                <dd><code th:text="${app.clientId}"></code></dd>
+                                <dd>
+                                    <code th:if="${app.clientId.length() <= 20}" th:text="${app.clientId}"></code>
+                                    <details class="application__client-id" th:if="${app.clientId.length() > 20}">
+                                        <summary th:aria-label="|查看 ${app.clientName} 的完整应用 ID|">
+                                            <code th:text="|${app.clientId.substring(0, 12)}…|"></code>
+                                        </summary>
+                                        <code th:text="${app.clientId}"></code>
+                                    </details>
+                                </dd>
                             </dl>
                         </div>
                     </header>

@@ -30,7 +30,7 @@
                     <form class="employee-search" th:action="@{/admin/employees}" method="get" role="search">
                         <label class="form-field">
                             姓名或账号
-                            <input type="search" name="q" th:value="${query}" maxlength="100" placeholder="如：小朱">
+                            <input type="search" name="q" th:value="${query}" maxlength="100" placeholder="如：演示员工">
                         </label>
                         <button class="button button--quiet" type="submit">搜索</button>
                         <a th:unless="${#strings.isEmpty(query)}" th:href="@{/admin/employees}">清除</a>

@@ -197,6 +197,9 @@
     background: var(--canvas);
 }
 
+.admin-console .application__client-id summary { cursor: pointer; }
+.admin-console .application__client-id > code { display: inline-block; margin-top: 6px; }
+
 .admin-console .application__actions .button {
     min-height: 44px;
 }

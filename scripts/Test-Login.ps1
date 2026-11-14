@@ -28,7 +28,7 @@ $callback = if ($UseAlternateWorkOrderCallback) { $alternateCallback } else { $d
 $mismatchedCallback = if ($UseAlternateWorkOrderCallback) { $defaultCallback } else { $alternateCallback }
 $employeePassword = 'Demo-Employee-2026!'
 $adminPassword = 'Demo-Admin-2026!'
-$employeeName = '小朱'
+$employeeName = '演示员工'
 
 function Assert-Test([bool]$Condition, [string]$Message) {
     if (!$Condition) { throw $Message }
