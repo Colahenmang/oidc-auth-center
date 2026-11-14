@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 class ApplicationSettingsController {
 
     private static final SecureRandom RANDOM = new SecureRandom();
+    private static final String MANUAL_CLIENT_PREFIX = "app-";
     private static final String CALLBACK_ERROR =
             "请填写完整的 HTTPS 地址。本地演示可以使用 HTTP 和 127.0.0.1 或 localhost。地址不能包含片段、账号信息或逗号。";
 
@@ -62,7 +63,7 @@ class ApplicationSettingsController {
             return application(model);
         }
 
-        String clientId = "app-" + UUID.randomUUID();
+        String clientId = MANUAL_CLIENT_PREFIX + UUID.randomUUID();
         byte[] secretBytes = new byte[32];
         RANDOM.nextBytes(secretBytes);
         String secret = Base64.getUrlEncoder().withoutPadding().encodeToString(secretBytes);
@@ -91,15 +92,62 @@ class ApplicationSettingsController {
             return application(model);
         }
 
-        clients.save(RegisteredClient.from(client).redirectUris(uris -> {
-            uris.clear();
-            uris.add(address);
-        }).build());
+        // An edit submitted concurrently with deletion must never recreate the client.
+        int updated = jdbc.update("UPDATE oauth2_registered_client SET redirect_uris = ? WHERE client_id = ?",
+                address, selectedClientId);
+        if (updated == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         redirect.addFlashAttribute("savedClientId", selectedClientId);
         return "redirect:/admin/application";
     }
 
+    @GetMapping("/admin/application/delete")
+    String confirmDelete(@RequestParam String clientId, Model model, HttpServletResponse response) {
+        if (!isManuallyRegistered(clientId)) {
+            return deletionError(model, response, HttpStatus.FORBIDDEN, "预置应用不可删除。");
+        }
+        RegisteredClient client = clients.findByClientId(clientId);
+        if (client == null) {
+            return deletionError(model, response, HttpStatus.NOT_FOUND, "应用已删除或不存在。");
+        }
+        model.addAttribute("deletionCandidate", new ApplicationForm(clientId, client.getClientName(), null));
+        return application(model);
+    }
+
+    @PostMapping("/admin/application/delete")
+    String delete(@RequestParam String clientId, @RequestParam(defaultValue = "false") boolean confirmed,
+                  Model model, RedirectAttributes redirect,
+                  HttpServletResponse response) {
+        if (!isManuallyRegistered(clientId)) {
+            return deletionError(model, response, HttpStatus.FORBIDDEN, "预置应用不可删除。");
+        }
+        if (!confirmed) {
+            return deletionError(model, response, HttpStatus.BAD_REQUEST, "请先打开确认页面并确认删除。");
+        }
+        int deleted = jdbc.update("DELETE FROM oauth2_registered_client WHERE client_id = ?", clientId);
+        if (deleted == 0) {
+            return deletionError(model, response, HttpStatus.NOT_FOUND, "应用已删除或不存在。");
+        }
+        redirect.addFlashAttribute("applicationDeleted", true);
+        return "redirect:/admin/application";
+    }
+
+    private String deletionError(Model model, HttpServletResponse response, HttpStatus status, String message) {
+        model.addAttribute("deletionError", message);
+        response.setStatus(status.value());
+        return application(model);
+    }
+
+    private static boolean isManuallyRegistered(String clientId) {
+        return clientId.startsWith(MANUAL_CLIENT_PREFIX);
+    }
+
     record ApplicationForm(String clientId, String clientName, String redirectUri) {
+
+        public boolean deletable() {
+            return isManuallyRegistered(clientId);
+        }
     }
 
     private static boolean isValidCallback(String address) {

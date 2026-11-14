@@ -15,6 +15,25 @@
             </div>
             <a class="button button--primary workspace__add" href="#application-create">新增应用</a>
         </div>
+        <p class="notice notice--success" role="status" th:if="${applicationDeleted}">应用已删除。</p>
+        <p class="notice notice--error" role="alert" th:if="${deletionError != null}" th:text="${deletionError}"></p>
+        <section class="card application-delete" th:if="${deletionCandidate != null}" aria-labelledby="application-delete-title">
+            <h2 id="application-delete-title">删除应用</h2>
+            <p id="application-delete-help">
+                将删除「<strong th:text="${deletionCandidate.clientName}">演示应用</strong>」的接入配置。
+                删除后，该应用将无法再通过认证中心发起新登录。
+            </p>
+            <dl class="application__meta">
+                <dt>应用 ID</dt>
+                <dd><code th:text="${deletionCandidate.clientId}"></code></dd>
+            </dl>
+            <form class="form-actions" th:action="@{/admin/application/delete}" method="post"
+                  aria-labelledby="application-delete-title" aria-describedby="application-delete-help">
+                <input type="hidden" name="clientId" th:value="${deletionCandidate.clientId}">
+                <a class="button button--quiet" th:href="@{/admin/application}">取消</a>
+                <button class="button button--danger" type="submit" name="confirmed" value="true">确认删除</button>
+            </form>
+        </section>
         <section class="card application-credentials" aria-labelledby="application-credentials-title"
                  th:if="${createdClientId != null and createdClientSecret != null}">
             <h2 id="application-credentials-title">应用已创建</h2>
@@ -81,6 +100,10 @@
                             <h3 id="hr-access-title">人事访问权限</h3>
                             <a class="button button--quiet" th:href="@{/admin/employees}">管理员工权限</a>
                         </section>
+                        <div class="application__delete-actions" th:if="${app.deletable()}">
+                            <a class="button button--delete" th:href="@{/admin/application/delete(clientId=${app.clientId})}"
+                               th:attr="aria-label=|删除应用 ${app.clientName}|">删除应用</a>
+                        </div>
                     </div>
                 </section>
             </section>

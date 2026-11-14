@@ -206,6 +206,48 @@
     padding-top: 12px;
 }
 
+.admin-console .application-delete {
+    margin-bottom: 18px;
+    padding: 20px;
+    border-color: #ebcbd2;
+}
+
+.admin-console .application-delete p {
+    margin-block: 8px;
+    overflow-wrap: anywhere;
+}
+
+.admin-console .application-delete form {
+    margin-top: 16px;
+}
+
+.admin-console .application__delete-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.admin-console .button--delete {
+    color: #9d2438;
+    border-color: #ebcbd2;
+    background: var(--surface);
+}
+
+.admin-console .button--delete:hover {
+    background: #fff1f3;
+}
+
+.admin-console .button--danger {
+    color: #fff;
+    background: #a5283d;
+}
+
+.admin-console .button--danger:hover {
+    background: #842036;
+}
+
 .admin-console .application-create,
 .admin-console .employee-create {
     margin: 0;

@@ -12,6 +12,9 @@
     <div class="header-content">
         <span class="app-mark" aria-hidden="true"><span class="app-icon"></span></span>
         <span th:text="|${appLabel}登录演示|">工单登录演示</span>
+        <a class="return-link" th:href="${identityCenterUrl}">
+            <span aria-hidden="true">←</span>返回认证中心
+        </a>
     </div>
 </header>
 <main class="work-order">
