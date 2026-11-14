@@ -236,16 +236,8 @@ code, .url-field { font-family: "IBM Plex Mono", Consolas, monospace; }
 .application-entry {
     margin-top: clamp(24px, 4vw, 37px);
     scroll-margin-top: 20px;
-    border-radius: var(--radius);
 }
-.application-entry:target {
-    outline: 2px solid var(--teal);
-    outline-offset: 8px;
-}
-.application-entry__heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; }
-.application-entry__heading h2 { font-size: 1.4rem; }
-.application-entry__manage { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 700; text-decoration: none; }
-.application-entry__manage:hover { text-decoration: underline; }
+.application-entry h2 { font-size: 1.4rem; }
 .destinations {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));

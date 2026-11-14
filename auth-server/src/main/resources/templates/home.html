@@ -10,38 +10,33 @@
         <div class="hero__copy">
             <h1 id="home-title">员工统一登录</h1>
             <p>一个员工账号可访问多个应用。登录后，切换到已开通的应用时可以免输密码。</p>
-            <a class="button button--primary" href="#applications">查看应用 <span class="chevron" aria-hidden="true"></span></a>
+            <a class="button button--quiet" th:href="@{/admin/application}">管理应用 <span class="chevron" aria-hidden="true"></span></a>
         </div>
         <div th:replace="~{fragments/shell :: identityArt}"></div>
     </section>
-    <section class="application-entry" id="applications" tabindex="-1" aria-labelledby="applications-title">
-        <div class="application-entry__heading">
-            <h2 id="applications-title">应用入口</h2>
-            <a class="application-entry__manage" th:href="@{/admin/application}">
-                管理应用 <span class="chevron" aria-hidden="true"></span>
-            </a>
-        </div>
-        <nav class="destinations" aria-label="演示应用">
+    <section class="application-entry" id="applications" aria-labelledby="applications-title">
+        <h2 id="applications-title">应用入口</h2>
+        <nav class="destinations" aria-label="业务系统">
             <a class="destination" href="http://127.0.0.1:8081/">
                 <span class="symbol symbol--grid" aria-hidden="true"></span>
                 <span class="destination__body">
-                    <strong>打开工单演示</strong>
-                    <span>从工单发起登录，查看当前员工</span>
+                    <strong>工单系统</strong>
+                    <span>登录并查看当前员工</span>
                 </span>
                 <span class="chevron" aria-hidden="true"></span>
             </a>
             <a class="destination" href="http://127.0.0.1:8082/">
                 <span class="symbol symbol--person" aria-hidden="true"></span>
                 <span class="destination__body">
-                    <strong>打开人事演示</strong>
-                    <span>体验免输密码与访问限制</span>
+                    <strong>人事系统</strong>
+                    <span>需开通人事访问权限</span>
                 </span>
                 <span class="chevron" aria-hidden="true"></span>
             </a>
             <a class="destination" href="http://127.0.0.1:8083/">
                 <span class="symbol symbol--finance" aria-hidden="true"></span>
                 <span class="destination__body">
-                    <strong>打开财务演示</strong>
+                    <strong>财务系统</strong>
                     <span>登记应用并启动后可用</span>
                 </span>
                 <span class="chevron" aria-hidden="true"></span>
