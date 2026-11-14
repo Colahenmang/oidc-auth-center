@@ -140,4 +140,4 @@ Compose 在认证中心的 OIDC 发现端点可用后启动两个演示应用。
 docker compose down
 ```
 
-[AI Coding 过程、复现提示词与参考来源](docs/AI-CODING.md)
+[AI Coding 过程、复现提示词与参考来源](docs/AI-CODING.md) · [验收阶段与 Git 提交](docs/AI-CODING.md#验收与-git-提交)
