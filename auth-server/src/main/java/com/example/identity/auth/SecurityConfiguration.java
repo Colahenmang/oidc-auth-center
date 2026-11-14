@@ -96,7 +96,7 @@ class SecurityConfiguration {
         siteRequests.setRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/admin/**"));
         http.requestCache(cache -> cache.requestCache(siteRequests));
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/", "/login", "/style.css", "/error",
+                .requestMatchers("/", "/login", "/style.css", "/admin.css", "/error",
                         "/.well-known/appspecific/com.chrome.devtools.json").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());

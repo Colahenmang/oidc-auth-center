@@ -13,77 +13,79 @@
                 <h1 id="employees-title">员工管理</h1>
                 <p class="muted">共 <strong id="employee-count" th:text="${employeeCount}">0</strong> 名员工</p>
             </div>
-            <a class="button button--primary" href="#employee-create">创建员工</a>
+            <a class="button button--primary workspace__add" href="#employee-create">创建员工</a>
         </div>
         <p class="notice notice--success" role="status" th:if="${created != null}"
            th:text="|已创建员工 ${created}。|"></p>
         <p class="notice notice--success" role="status" th:if="${accessSaved != null}"
            th:text="|已更新 ${accessSaved} 的人事访问权限。|"></p>
         <p class="notice notice--error" role="alert" th:if="${error != null}" th:text="${error}"></p>
-        <section class="card employee-directory" aria-labelledby="employee-list-title">
-            <div class="employee-directory__header">
-                <div>
-                    <h2 id="employee-list-title">员工列表</h2>
-                    <p class="muted" id="employee-access-help">权限变更在员工下次发起人事登录时生效。</p>
-                </div>
-                <form class="employee-search" th:action="@{/admin/employees}" method="get" role="search">
-                    <label class="form-field">
-                        姓名或账号
-                        <input type="search" name="q" th:value="${query}" maxlength="100" placeholder="如：小朱">
-                    </label>
-                    <button class="button button--quiet" type="submit">搜索</button>
-                    <a th:unless="${#strings.isEmpty(query)}" th:href="@{/admin/employees}">清除</a>
-                </form>
-            </div>
-            <p class="employee-directory__empty muted" th:if="${#lists.isEmpty(employees)}">没有找到符合条件的员工。</p>
-            <div class="employee-list__header" th:unless="${#lists.isEmpty(employees)}" aria-hidden="true">
-                <span>员工</span>
-                <span>人事访问权限</span>
-                <span>操作</span>
-            </div>
-            <ul class="employee-list" th:unless="${#lists.isEmpty(employees)}" role="list">
-                <li class="employee-list__row" th:each="employee : ${employees}">
-                    <div class="employee-list__identity">
-                        <strong th:text="${employee.displayName}">员工姓名</strong>
-                        <code th:text="${employee.username}">employee</code>
+        <div class="workspace__sections">
+            <section class="card employee-directory" aria-labelledby="employee-list-title">
+                <div class="employee-directory__header">
+                    <div>
+                        <h2 id="employee-list-title">员工列表</h2>
+                        <p class="muted" id="employee-access-help">权限变更在员工下次发起人事登录时生效。</p>
                     </div>
-                    <span class="employee-access-status" th:classappend="${employee.hrAccessGranted ? 'employee-access-status--granted' : null}"
-                          th:text="${employee.hrAccessGranted ? '已开通人事权限' : '未开通人事权限'}">未开通人事权限</span>
-                    <form th:action="@{/admin/employees/hr-access}" method="post" aria-describedby="employee-access-help">
-                        <input type="hidden" name="username" th:value="${employee.username}">
-                        <input type="hidden" name="allowed" th:value="${!employee.hrAccessGranted}">
-                        <input type="hidden" name="q" th:value="${query}">
-                        <button class="button" th:classappend="${employee.hrAccessGranted ? 'button--quiet' : 'button--primary'}"
-                                type="submit"
-                                th:attr="aria-label=${(employee.hrAccessGranted ? '取消人事权限' : '开通人事权限') + '，员工 ' + employee.displayName}"
-                                th:text="${employee.hrAccessGranted ? '取消人事权限' : '开通人事权限'}">开通人事权限</button>
+                    <form class="employee-search" th:action="@{/admin/employees}" method="get" role="search">
+                        <label class="form-field">
+                            姓名或账号
+                            <input type="search" name="q" th:value="${query}" maxlength="100" placeholder="如：小朱">
+                        </label>
+                        <button class="button button--quiet" type="submit">搜索</button>
+                        <a th:unless="${#strings.isEmpty(query)}" th:href="@{/admin/employees}">清除</a>
                     </form>
-                </li>
-            </ul>
-        </section>
-        <section class="card employee-create" id="employee-create" aria-labelledby="employee-create-title">
-            <h2 id="employee-create-title">创建员工</h2>
-            <form class="employee-create__form" th:action="@{/admin/employees}" method="post">
-                <div class="form-field">
-                    <label for="employee-display-name">姓名</label>
-                    <input id="employee-display-name" type="text" name="displayName" th:value="${displayName}"
-                           autocomplete="off" maxlength="80" required>
                 </div>
-                <div class="form-field">
-                    <label for="employee-username">登录账号</label>
-                    <input id="employee-username" type="text" name="username" th:value="${username}"
-                           autocomplete="off" autocapitalize="none" spellcheck="false"
-                           minlength="3" maxlength="50" required>
+                <p class="employee-directory__empty muted" th:if="${#lists.isEmpty(employees)}">没有找到符合条件的员工。</p>
+                <div class="employee-list__header" th:unless="${#lists.isEmpty(employees)}" aria-hidden="true">
+                    <span>员工</span>
+                    <span>人事访问权限</span>
+                    <span>操作</span>
                 </div>
-                <div class="form-field">
-                    <label for="employee-password">初始密码</label>
-                    <input id="employee-password" type="password" name="password" autocomplete="new-password"
-                           minlength="8" required aria-describedby="employee-password-help">
-                    <small id="employee-password-help" class="muted">至少 8 个字符</small>
-                </div>
-                <button class="button button--primary" type="submit">创建员工</button>
-            </form>
-        </section>
+                <ul class="employee-list" th:unless="${#lists.isEmpty(employees)}" role="list">
+                    <li class="employee-list__row" th:each="employee : ${employees}">
+                        <div class="employee-list__identity">
+                            <strong th:text="${employee.displayName}">员工姓名</strong>
+                            <code th:text="${employee.username}">employee</code>
+                        </div>
+                        <span class="employee-access-status" th:classappend="${employee.hrAccessGranted ? 'employee-access-status--granted' : null}"
+                              th:text="${employee.hrAccessGranted ? '已开通人事权限' : '未开通人事权限'}">未开通人事权限</span>
+                        <form th:action="@{/admin/employees/hr-access}" method="post" aria-describedby="employee-access-help">
+                            <input type="hidden" name="username" th:value="${employee.username}">
+                            <input type="hidden" name="allowed" th:value="${!employee.hrAccessGranted}">
+                            <input type="hidden" name="q" th:value="${query}">
+                            <button class="button" th:classappend="${employee.hrAccessGranted ? 'button--quiet' : 'button--primary'}"
+                                    type="submit"
+                                    th:attr="aria-label=${(employee.hrAccessGranted ? '取消人事权限' : '开通人事权限') + '，员工 ' + employee.displayName}"
+                                    th:text="${employee.hrAccessGranted ? '取消人事权限' : '开通人事权限'}">开通人事权限</button>
+                        </form>
+                    </li>
+                </ul>
+            </section>
+            <section class="card employee-create" id="employee-create" aria-labelledby="employee-create-title">
+                <h2 id="employee-create-title">创建员工</h2>
+                <form class="employee-create__form" th:action="@{/admin/employees}" method="post">
+                    <div class="form-field">
+                        <label for="employee-display-name">姓名</label>
+                        <input id="employee-display-name" type="text" name="displayName" th:value="${displayName}"
+                               autocomplete="off" maxlength="80" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="employee-username">登录账号</label>
+                        <input id="employee-username" type="text" name="username" th:value="${username}"
+                               autocomplete="off" autocapitalize="none" spellcheck="false"
+                               minlength="3" maxlength="50" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="employee-password">初始密码</label>
+                        <input id="employee-password" type="password" name="password" autocomplete="new-password"
+                               minlength="8" required aria-describedby="employee-password-help">
+                        <small id="employee-password-help" class="muted">至少 8 个字符</small>
+                    </div>
+                    <button class="button button--primary" type="submit">创建员工</button>
+                </form>
+            </section>
+        </div>
     </main>
 </div>
 </body>

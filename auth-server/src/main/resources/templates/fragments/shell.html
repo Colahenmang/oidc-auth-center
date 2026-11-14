@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${pageTitle}">员工认证中心</title>
     <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/admin.css}">
     <link rel="icon" href="data:,">
 </head>
 <body>
@@ -23,8 +24,8 @@
     </div>
 </header>
 <aside class="workspace__sidebar" th:fragment="adminSidebar(activePage)">
-    <nav class="workspace-nav" aria-label="认证中心">
-        <a th:href="@{/}"><span class="nav-icon nav-icon--home" aria-hidden="true"></span>返回首页</a>
+    <p class="workspace__sidebar-title">管理控制台</p>
+    <nav class="workspace-nav" aria-label="管理控制台">
         <a th:href="@{/admin/application}" th:classappend="${activePage == 'application' ? 'workspace-nav__active' : null}"
            th:attr="aria-current=${activePage == 'application' ? 'page' : null}">
             <span class="nav-icon nav-icon--application" aria-hidden="true"></span>应用配置
@@ -33,6 +34,7 @@
            th:attr="aria-current=${activePage == 'employees' ? 'page' : null}">
             <span class="nav-icon nav-icon--employee" aria-hidden="true"></span>员工管理
         </a>
+        <a th:href="@{/}"><span class="nav-icon nav-icon--home" aria-hidden="true"></span>返回首页</a>
     </nav>
     <form th:action="@{/logout}" method="post">
         <button class="button button--quiet" type="submit">退出认证中心</button>

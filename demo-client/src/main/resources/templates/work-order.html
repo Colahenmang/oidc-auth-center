@@ -47,7 +47,10 @@
                 <div class="visual-ticket-heading"><span class="app-icon"></span><span></span></div>
                 <div class="visual-ticket-lines"><span></span><span></span><span></span></div>
             </div>
-            <div class="visual-identity"><span class="check-mark"></span></div>
+            <div class="visual-identity">
+                <span th:if="${employeeId == null}" class="button-arrow"></span>
+                <span th:if="${employeeId != null}" class="check-mark"></span>
+            </div>
         </div>
     </div>
 </main>

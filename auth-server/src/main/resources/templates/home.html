@@ -8,38 +8,46 @@
 <main class="page landing">
     <section class="hero" aria-labelledby="home-title">
         <div class="hero__copy">
-            <span class="hero__label">员工认证中心</span>
             <h1 id="home-title">员工统一登录</h1>
-            <p>用同一个员工账号登录工单和人事。已有登录状态时，可免输密码进入已开通的应用。</p>
+            <p>一个员工账号可访问多个应用。登录后，切换到已开通的应用时可以免输密码。</p>
+            <a class="button button--primary" href="#applications">查看应用 <span class="chevron" aria-hidden="true"></span></a>
         </div>
         <div th:replace="~{fragments/shell :: identityArt}"></div>
     </section>
-    <nav class="destinations" aria-label="演示与管理">
-        <a class="destination" href="http://127.0.0.1:8081/">
-            <span class="symbol symbol--grid" aria-hidden="true"></span>
-            <span class="destination__body">
-                <strong>打开工单演示</strong>
-                <span>从工单发起登录，查看当前员工</span>
-            </span>
-            <span class="chevron" aria-hidden="true"></span>
-        </a>
-        <a class="destination" href="http://127.0.0.1:8082/">
-            <span class="symbol symbol--person" aria-hidden="true"></span>
-            <span class="destination__body">
-                <strong>打开人事演示</strong>
-                <span>体验免输密码与访问限制</span>
-            </span>
-            <span class="chevron" aria-hidden="true"></span>
-        </a>
-        <a class="destination destination--admin" th:href="@{/admin/application}">
-            <span class="symbol symbol--settings" aria-hidden="true"></span>
-            <span class="destination__body">
-                <strong>管理应用</strong>
-                <span>配置回调地址、管理员工和权限</span>
-            </span>
-            <span class="chevron" aria-hidden="true"></span>
-        </a>
-    </nav>
+    <section class="application-entry" id="applications" aria-labelledby="applications-title">
+        <div class="application-entry__heading">
+            <h2 id="applications-title">应用入口</h2>
+            <a class="application-entry__manage" th:href="@{/admin/application}">
+                管理应用 <span class="chevron" aria-hidden="true"></span>
+            </a>
+        </div>
+        <nav class="destinations" aria-label="演示应用">
+            <a class="destination" href="http://127.0.0.1:8081/">
+                <span class="symbol symbol--grid" aria-hidden="true"></span>
+                <span class="destination__body">
+                    <strong>打开工单演示</strong>
+                    <span>从工单发起登录，查看当前员工</span>
+                </span>
+                <span class="chevron" aria-hidden="true"></span>
+            </a>
+            <a class="destination" href="http://127.0.0.1:8082/">
+                <span class="symbol symbol--person" aria-hidden="true"></span>
+                <span class="destination__body">
+                    <strong>打开人事演示</strong>
+                    <span>体验免输密码与访问限制</span>
+                </span>
+                <span class="chevron" aria-hidden="true"></span>
+            </a>
+            <a class="destination" href="http://127.0.0.1:8083/">
+                <span class="symbol symbol--finance" aria-hidden="true"></span>
+                <span class="destination__body">
+                    <strong>打开财务演示</strong>
+                    <span>登记应用并启动后可用</span>
+                </span>
+                <span class="chevron" aria-hidden="true"></span>
+            </a>
+        </nav>
+    </section>
 </main>
 </body>
 </html>

@@ -13,7 +13,7 @@
                 <h1 id="application-title">应用配置</h1>
                 <p class="muted">分别设置各应用接收登录结果的地址。应用发来的地址须与登记地址完全一致。</p>
             </div>
-            <a class="button button--primary" href="#application-create">新增应用</a>
+            <a class="button button--primary workspace__add" href="#application-create">新增应用</a>
         </div>
         <section class="card application-credentials" aria-labelledby="application-credentials-title"
                  th:if="${createdClientId != null and createdClientSecret != null}">
@@ -37,68 +37,74 @@
             <a href="#application-create">返回新增表单</a>
         </p>
         <p class="notice notice--error" role="alert" th:if="${error != null and errorClientId == null}" th:text="${error}"></p>
-        <div class="application-list">
-            <section class="card application" th:each="app : ${applications}"
-                     th:with="titleId=${'application-name-' + app.clientId},
-                              fieldId=${app.clientId == 'work-order-demo' ? 'redirect-uri' : 'redirect-uri-' + app.clientId},
-                              errorId=${'callback-error-' + app.clientId},
-                              hasError=${app.clientId == errorClientId and error != null}"
-                     th:attr="aria-labelledby=${titleId}">
-                <header class="application__header">
-                    <span class="symbol symbol--grid" th:classappend="${app.clientId == 'hr-demo' ? 'application__symbol--hr' : null}"
-                          aria-hidden="true"></span>
-                    <div>
-                        <h2 th:id="${titleId}" th:text="${app.clientName}">工单演示</h2>
-                        <dl class="application__meta">
-                            <dt>应用 ID</dt>
-                            <dd><code th:text="${app.clientId}"></code></dd>
-                        </dl>
-                    </div>
+        <div class="workspace__sections">
+            <section class="application-list" aria-labelledby="application-list-title">
+                <header class="workspace__section-heading">
+                    <p class="workspace__section-title" id="application-list-title">已登记应用</p>
+                    <span class="workspace__count" th:text="|${#lists.size(applications)} 个应用|">2 个应用</span>
                 </header>
-                <div class="application__body">
-                    <p class="notice notice--success" role="status" th:if="${app.clientId == savedClientId}">回调地址已保存。</p>
-                    <p class="notice notice--error" th:id="${errorId}" role="alert" th:if="${hasError}" th:text="${error}"></p>
-                    <form class="form-stack application__form" th:action="@{/admin/application}" method="post" th:attr="aria-labelledby=${titleId}">
-                        <input type="hidden" name="clientId" th:value="${app.clientId}">
-                        <div class="form-field">
-                            <label th:for="${fieldId}">登录回调地址</label>
-                            <input class="url-field" th:id="${fieldId}" name="redirectUri"
-                                   th:value="${hasError ? submittedRedirectUri : app.redirectUri}" type="url"
-                                   autocomplete="off" maxlength="1000" required
-                                   th:attr="aria-invalid=${hasError},aria-describedby=${hasError ? errorId : null}">
+                <section class="card application" th:each="app : ${applications}"
+                         th:with="titleId=${'application-name-' + app.clientId},
+                                  fieldId=${app.clientId == 'work-order-demo' ? 'redirect-uri' : 'redirect-uri-' + app.clientId},
+                                  errorId=${'callback-error-' + app.clientId},
+                                  hasError=${app.clientId == errorClientId and error != null}"
+                         th:attr="aria-labelledby=${titleId}">
+                    <header class="application__header">
+                        <span class="symbol symbol--grid" th:classappend="${app.clientId == 'hr-demo' ? 'application__symbol--hr' : null}"
+                              aria-hidden="true"></span>
+                        <div>
+                            <h2 th:id="${titleId}" th:text="${app.clientName}">工单演示</h2>
+                            <dl class="application__meta">
+                                <dt>应用 ID</dt>
+                                <dd><code th:text="${app.clientId}"></code></dd>
+                            </dl>
                         </div>
-                        <div class="form-actions application__actions">
-                            <button class="button button--primary" type="submit">保存回调地址</button>
-                        </div>
-                    </form>
-                    <section class="application__access" th:if="${app.clientId == 'hr-demo'}"
-                             aria-labelledby="hr-access-title">
-                        <h3 id="hr-access-title">人事访问权限</h3>
-                        <a class="button button--quiet" th:href="@{/admin/employees}">管理员工权限</a>
-                    </section>
-                </div>
+                    </header>
+                    <div class="application__body">
+                        <p class="notice notice--success" role="status" th:if="${app.clientId == savedClientId}">回调地址已保存。</p>
+                        <p class="notice notice--error" th:id="${errorId}" role="alert" th:if="${hasError}" th:text="${error}"></p>
+                        <form class="form-stack application__form" th:action="@{/admin/application}" method="post" th:attr="aria-labelledby=${titleId}">
+                            <input type="hidden" name="clientId" th:value="${app.clientId}">
+                            <div class="form-field">
+                                <label th:for="${fieldId}">登录回调地址</label>
+                                <input class="url-field" th:id="${fieldId}" name="redirectUri"
+                                       th:value="${hasError ? submittedRedirectUri : app.redirectUri}" type="url"
+                                       autocomplete="off" maxlength="1000" required
+                                       th:attr="aria-invalid=${hasError},aria-describedby=${hasError ? errorId : null}">
+                            </div>
+                            <div class="form-actions application__actions">
+                                <button class="button button--primary" type="submit">保存回调地址</button>
+                            </div>
+                        </form>
+                        <section class="application__access" th:if="${app.clientId == 'hr-demo'}"
+                                 aria-labelledby="hr-access-title">
+                            <h3 id="hr-access-title">人事访问权限</h3>
+                            <a class="button button--quiet" th:href="@{/admin/employees}">管理员工权限</a>
+                        </section>
+                    </div>
+                </section>
+            </section>
+            <section class="card application-create" id="application-create" aria-labelledby="application-create-title">
+                <h2 id="application-create-title">新增应用</h2>
+                <form class="form-stack application-create__form" id="application-create-form"
+                      th:action="@{/admin/application/create}" method="post">
+                    <div class="form-field">
+                        <label for="new-client-name">应用名称</label>
+                        <input id="new-client-name" type="text" name="clientName" th:value="${submittedClientName}"
+                               autocomplete="off" maxlength="80" required
+                               th:attr="aria-describedby=${registrationError != null ? 'registration-error' : null}">
+                    </div>
+                    <div class="form-field">
+                        <label for="new-client-redirect-uri">登录回调地址</label>
+                        <input class="url-field" id="new-client-redirect-uri" type="url" name="redirectUri"
+                               th:value="${submittedNewRedirectUri}" autocomplete="off" spellcheck="false" maxlength="1000"
+                               placeholder="https://portal.example.com/login/oauth2/code/portal" required
+                               th:attr="aria-describedby=${registrationError != null ? 'registration-error' : null}">
+                    </div>
+                    <button class="button button--primary" type="submit">创建应用</button>
+                </form>
             </section>
         </div>
-        <section class="card application-create" id="application-create" aria-labelledby="application-create-title">
-            <h2 id="application-create-title">新增应用</h2>
-            <form class="form-stack application-create__form" id="application-create-form"
-                  th:action="@{/admin/application/create}" method="post">
-                <div class="form-field">
-                    <label for="new-client-name">应用名称</label>
-                    <input id="new-client-name" type="text" name="clientName" th:value="${submittedClientName}"
-                           autocomplete="off" maxlength="80" required
-                           th:attr="aria-describedby=${registrationError != null ? 'registration-error' : null}">
-                </div>
-                <div class="form-field">
-                    <label for="new-client-redirect-uri">登录回调地址</label>
-                    <input class="url-field" id="new-client-redirect-uri" type="url" name="redirectUri"
-                           th:value="${submittedNewRedirectUri}" autocomplete="off" spellcheck="false" maxlength="1000"
-                           placeholder="https://portal.example.com/login/oauth2/code/portal" required
-                           th:attr="aria-describedby=${registrationError != null ? 'registration-error' : null}">
-                </div>
-                <button class="button button--primary" type="submit">创建应用</button>
-            </form>
-        </section>
     </main>
 </div>
 </body>
